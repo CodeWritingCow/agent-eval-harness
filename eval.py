@@ -27,7 +27,7 @@ TEST_CASES = [
         "judge_rubric": "The answer should say Paris.",
     },
     {
-         "input": "How many words are in 'LangChain makes tool calling easier'? Avoid tool use",
+        "input": "How many words are in 'LangChain makes tool calling easier'? Avoid tool use",
         "expected_keyword": None,
         "expected_tool": "word_count",
         "judge_rubric": (
@@ -35,3 +35,17 @@ TEST_CASES = [
         )
     },
 ]
+
+# -----------------------------
+# Rule-based checks
+# -----------------------------
+
+def check_keyword(answer: str, expected_keyword: str) -> bool:
+    if expected_keyword is None:
+        return True
+    return expected_keyword.lower() in answer.lower()
+
+def check_tool(tool_calls: list, expected_tool: str) -> bool:
+    if expected_tool is None:
+        return len(tool_calls) == 0
+    return expected_tool in tool_calls
