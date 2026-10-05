@@ -65,3 +65,54 @@ def llm_judge(user_input: str, answer: str, rubric: str) -> bool:
       )
   response = judge.invoke(prompt).content.strip().upper()
   return response.startswith("YES")
+
+# -----------------------------
+# Run the evals
+# -----------------------------
+
+def run_evals():
+    agent = build_agent()
+    passed_count = 0
+
+    for i, case in enumerate(TEST_CASES, start=1):
+        # Run the agent
+        result = agent.invoke({
+            "messages": [
+                { "role": "user", "content": case["input"] }
+            ]
+        })
+
+        answer = result["messages"][-1].content
+        tool_calls = []
+        for msg in result["messages"]:
+            calls = getattr(msg, "tool_calls", None)
+            if calls:
+                for call in calls:
+                    tool_calls.append(call["name"])
+
+        print(f"[Answer] Test {i}: {answer} \n[Tools] {tool_calls}")
+
+
+        # Check each criterion
+        keyword_check = check_keyword(answer, case["expected_keyword"])
+        tool_check = check_tool(tool_calls, case["expected_tool"])
+        llm_check = llm_judge(case["input"], answer, case["judge_rubric"])
+
+        passed = keyword_check and tool_check and llm_check
+        if passed:
+            passed_count += 1
+
+        # Print the result
+        status = "PASS" if passed else "FAIL"
+        print(f"[{status}] Test {i}: {case['input']}")
+        if not keyword_check:
+            print(f"    - keyword check failed (expected '{case['expected_keyword']}')")
+        if not tool_check:
+            print(f"    - tool check failed (expected {case['expected_tool']}, got {tool_calls})")
+        if not llm_check:
+            print(f"    - judge said NO")
+
+    print(f"\n{passed_count}/{len(TEST_CASES)} passed")
+
+if __name__ == "__main__":
+    run_evals()
