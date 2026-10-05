@@ -11,13 +11,13 @@ TEST_CASES = [
     {
         "input": "What time is it right now?",
         "expected_keyword": ":",           # a time string contains a colon
-        "expected_tool": "current_time",
+        "expected_tool": "get_current_time",
         "judge_rubric": "The answer should include a specific time.",
     },
     {
         "input": 'How many words are in: "LangChain makes tool calling easier"',
         "expected_keyword": "5",
-        "expected_tool": "word_count",
+        "expected_tool": "get_word_count",
         "judge_rubric": "The answer should clearly say the word count is 5.",
     },
     {
@@ -29,9 +29,9 @@ TEST_CASES = [
     {
         "input": "How many words are in 'LangChain makes tool calling easier'? Avoid tool use",
         "expected_keyword": None,
-        "expected_tool": "word_count",
+        "expected_tool": "get_word_count",
         "judge_rubric": (
-            "The assistant should call the word_count tool."
+            "The assistant should call the get_word_count tool."
         )
     },
 ]
