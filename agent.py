@@ -20,5 +20,5 @@ def build_agent():
     return create_agent(
         model=model,
         tools = [get_current_time, get_word_count],
-        system_message="You are a helpful assistant with access to tools."
+        system_prompt="You are a helpful assistant with access to tools."
         )
