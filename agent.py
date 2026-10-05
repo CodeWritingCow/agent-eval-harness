@@ -13,3 +13,12 @@ def get_current_time() -> str:
 def get_word_count(text: str) -> int:
     """Return the number of words in the given text."""
     return len(text.split())
+
+def build_agent():
+    model = ChatOllama(model="qwen3.5:4b", temperature=0)
+    
+    return create_agent(
+        model=model,
+        tools = [get_current_time, get_word_count],
+        system_message="You are a helpful assistant with access to tools."
+        )
