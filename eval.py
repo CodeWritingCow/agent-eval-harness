@@ -49,3 +49,19 @@ def check_tool(tool_calls: list, expected_tool: str) -> bool:
     if expected_tool is None:
         return len(tool_calls) == 0
     return expected_tool in tool_calls
+
+# -----------------------------
+# LLM-as-judge
+# -----------------------------
+ 
+judge = ChatOllama(model="qwen3.5:4b", temperature=0)
+
+def llm_judge(user_input: str, answer: str, rubric: str) -> bool:
+  prompt = (
+          f"User asked: {user_input}\n"
+          f"Agent answered: {answer}\n"
+          f"Rubric: {rubric}\n\n"
+          f"Does the answer meet the rubric? Reply with just YES or NO."
+      )
+  response = judge.invoke(prompt).content.strip().upper()
+  return response.startswith("YES")
